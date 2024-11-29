@@ -1,0 +1,28 @@
+
+sequenceDiagram
+    participant M as Main
+    participant IM as InvestigationManager
+    participant CM as CaseManager
+    participant AMM as AIModelManager
+    participant C as Case
+    participant E as Evidence
+    participant R as Report
+    participant AM as AIModels
+    M->>IM: create_case(case_data)
+    IM->>CM: create_case(case_data)
+    CM-->>IM: case_id
+    IM->>AMM: load_models()
+    IM->>IM: assign_ai_models(case_id)
+    IM->>IM: collect_evidence(case_id, evidence_data)
+    loop For each evidence
+        IM->>C: add_evidence(evidence_data)
+        C->>E: create_evidence(evidence_data)
+    end
+    IM->>AMM: run_investigation(case_id, evidence_data)
+    AMM->>AM: analyze(E)
+    AM-->>AMM: findings
+    IM->>C: generate_report()
+    C->>R: create_report(findings)
+    R-->>C: report_id
+    C-->>IM: report
+    IM-->>M: return report
